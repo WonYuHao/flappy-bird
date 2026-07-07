@@ -1,61 +1,64 @@
 /**
- * Leaderboard - 排行榜数据管理（localStorage 版本）
- * 支持本地排行榜和后续升级到远程 API
+ * Leaderboard - Supabase 远程排行榜
+ * 提交分数到 Supabase，获取全服 Top 20
  */
+
+const SUPABASE_URL = 'https://hkeaguwnkjbxwqazjxbd.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhrZWFndXdua2pieHdxYXpqeGJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzOTQzNTAsImV4cCI6MjA5ODk3MDM1MH0.AcposSh94v8nHfiFZLjRiqVGLIR7CiYDxfZkXPY7w9Y';
+
 class Leaderboard {
   constructor() {
-    this.storageKey = 'flappyLeaderboard';
     this.maxEntries = 20;
   }
 
-  /** 获取排行榜数据 */
-  getRankings() {
+  /** 提交分数到 Supabase */
+  async submitScore(nickname, score) {
+    const name = String(nickname).trim().slice(0, 12);
+    if (!name) return false;
+
     try {
-      const raw = localStorage.getItem(this.storageKey);
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/scores`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Prefer': 'return=minimal',
+        },
+        body: JSON.stringify({ nickname: name, score }),
+      });
+      return res.ok;
+    } catch (e) {
+      console.warn('提交分数失败:', e.message);
+      return false;
     }
   }
 
-  /** 提交分数 */
-  submitScore(nickname, score) {
-    const entries = this.getRankings();
-    const entry = {
-      nickname: String(nickname).trim().slice(0, 12),
-      score: score,
-      date: new Date().toISOString().slice(0, 10),
-    };
-
-    entries.push(entry);
-    entries.sort((a, b) => b.score - a.score);
-
-    // 只保留 top N
-    const trimmed = entries.slice(0, this.maxEntries);
-
+  /** 获取 Top 20 排行榜 */
+  async getRankings() {
     try {
-      localStorage.setItem(this.storageKey, JSON.stringify(trimmed));
-    } catch {
-      // 存储满了则清理后重试
-      console.warn('localStorage 存储已满');
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/scores?select=*&order=score.desc&limit=${this.maxEntries}`,
+        {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+          },
+        }
+      );
+      const data = await res.json();
+      return {
+        rankings: data.map((e, i) => ({ ...e, rank: i + 1 })),
+        total: data.length,
+      };
+    } catch (e) {
+      console.warn('获取排行榜失败:', e.message);
+      return { rankings: [], total: 0 };
     }
-
-    // 计算排名（返回条目在完整列表中的位置）
-    const rank = trimmed.findIndex(e => e === entry) + 1;
-
-    return {
-      rank,
-      total: trimmed.length,
-      rankings: trimmed.map((e, i) => ({ ...e, rank: i + 1 })),
-    };
   }
 
-  /** 获取完整排行（带 rank） */
-  getFormattedRankings() {
-    const entries = this.getRankings();
-    return {
-      rankings: entries.map((e, i) => ({ ...e, rank: i + 1 })),
-      total: entries.length,
-    };
+  /** 获取排名（保留兼容） */
+  async getFormattedRankings() {
+    return await this.getRankings();
   }
 }

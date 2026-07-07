@@ -43,14 +43,12 @@ class UI {
     this.elements.finalScore.textContent = score;
     this.elements.bestScore.textContent = Math.max(score, bestScore);
 
-    // 是否新纪录
     if (score > bestScore && score > 0) {
       this.elements.newBest.classList.remove('hidden');
     } else {
       this.elements.newBest.classList.add('hidden');
     }
 
-    // 缓存当前分数用于提交
     this._lastScore = score;
   }
 
@@ -61,22 +59,28 @@ class UI {
     this.elements.leaderboardModal.classList.add('hidden');
   }
 
-  /** 提交分数 */
-  submitScore() {
+  /** 提交分数（异步） */
+  async submitScore() {
     const nickname = this.elements.nicknameInput.value.trim();
     if (!nickname) {
       this.elements.nicknameInput.classList.add('shake');
       setTimeout(() => this.elements.nicknameInput.classList.remove('shake'), 500);
-      return '';
+      return null;
     }
 
-    const result = this.leaderboard.submitScore(nickname, this._lastScore);
+    this.elements.submitBtn.textContent = '提交中...';
+    this.elements.submitBtn.disabled = true;
+
+    const result = await this.leaderboard.submitScore(nickname, this._lastScore);
     return result;
   }
 
-  /** 显示排行榜弹窗 */
-  showLeaderboard() {
-    const data = this.leaderboard.getFormattedRankings();
+  /** 显示排行榜弹窗（异步） */
+  async showLeaderboard() {
+    this.elements.leaderboardModal.classList.remove('hidden');
+    this.elements.leaderboardList.innerHTML = '<div class="empty-rank">加载中...</div>';
+
+    const data = await this.leaderboard.getRankings();
     this.elements.leaderboardTotal.textContent = data.total;
 
     let html = '';
@@ -86,18 +90,18 @@ class UI {
       data.rankings.forEach(entry => {
         const rankClass = entry.rank <= 3 ? `rank-${entry.rank}` : '';
         const medal = entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : '';
+        const dateStr = entry.created_at ? entry.created_at.slice(0, 10) : '';
         html += `
           <div class="rank-item ${rankClass}">
             <span class="rank-num">${medal || entry.rank}</span>
             <span class="rank-name">${this._escape(entry.nickname)}</span>
             <span class="rank-score">${entry.score}</span>
-            <span class="rank-date">${entry.date}</span>
+            <span class="rank-date">${dateStr}</span>
           </div>
         `;
       });
     }
     this.elements.leaderboardList.innerHTML = html;
-    this.elements.leaderboardModal.classList.remove('hidden');
   }
 
   /** 关闭排行榜 */

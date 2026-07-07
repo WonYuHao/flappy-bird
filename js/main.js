@@ -25,11 +25,11 @@ function _bindUIEvents() {
   const audio = new AudioManager();
 
   // 排行榜按钮（开始界面右上角）
-  ui.elements.leaderboardBtn.addEventListener('click', (e) => {
+  ui.elements.leaderboardBtn.addEventListener('click', async (e) => {
     e.stopPropagation();
     audio.init();
     audio.click();
-    ui.showLeaderboard();
+    await ui.showLeaderboard();
   });
 
   // 关闭排行榜
@@ -47,17 +47,17 @@ function _bindUIEvents() {
   });
 
   // 提交分数按钮
-  ui.elements.submitBtn.addEventListener('click', (e) => {
+  ui.elements.submitBtn.addEventListener('click', async (e) => {
     e.stopPropagation();
     audio.init();
     audio.click();
-    const result = ui.submitScore();
-    if (result) {
-      // 提交成功后显示排行榜
+    const ok = await ui.submitScore();
+    if (ok) {
       const btn = ui.elements.submitBtn;
       btn.textContent = '✓ 已提交';
       btn.classList.add('submitted');
-      ui.showLeaderboard();
+      btn.disabled = false;
+      await ui.showLeaderboard();
     }
   });
 
