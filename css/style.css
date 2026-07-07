@@ -223,6 +223,60 @@ html, body {
   display: none;
 }
 
+/* 排名信息行 */
+.rank-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin: 4px 0 6px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.info-divider {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+#current-rank {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#best-score-line {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* 匿名确认弹窗 */
+.confirm-card {
+  max-width: 280px !important;
+  text-align: center;
+  padding: 28px 24px 20px !important;
+}
+
+.confirm-text {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.confirm-text b {
+  color: #FFD54F;
+}
+
+.confirm-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.confirm-buttons .btn {
+  flex: 1;
+  margin-top: 0;
+}
+
 /* 昵称输入 */
 .nickname-section {
   margin: 16px 0 12px;

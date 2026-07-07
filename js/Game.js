@@ -133,10 +133,9 @@ class Game {
   }
 
   /** DEAD → IDLE (显示结算界面) */
-  showGameOver() {
-    // 立即保存最高分，确保无论何种操作都不会丢失
+  async showGameOver() {
     this._saveBestScore();
-    ui.showGameOver(this.score, this._getBestScore());
+    await ui.showGameOver(this.score, this._getBestScore());
   }
 
   /** 重新开始 */
@@ -217,7 +216,7 @@ class Game {
       const prevTop = prevPipe ? prevPipe.topHeight : undefined;
 
       const pipe = new Pipe(GAME_WIDTH);
-      pipe.gap = this.currentGap;
+      pipe.gap = Pipe.randomizeGap(this.currentGap);
       pipe.reset(GAME_WIDTH, prevTop);
       this.pipes.push(pipe);
 

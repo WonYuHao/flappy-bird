@@ -61,4 +61,25 @@ class Leaderboard {
   async getFormattedRankings() {
     return await this.getRankings();
   }
+
+  /** 查询某个分数在排行榜上的排名 */
+  async getRank(score) {
+    try {
+      // 统计比当前分数高的记录数
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/scores?select=score&score=gt.${score}`,
+        {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+          },
+        }
+      );
+      const higher = await res.json();
+      return higher.length + 1;
+    } catch (e) {
+      console.warn('查询排名失败:', e.message);
+      return null;
+    }
+  }
 }

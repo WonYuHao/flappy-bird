@@ -14,11 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // 绑定 UI 按钮事件
   _bindUIEvents();
 
-  // 显示开始界面
-  ui.showStart();
-
-  // 启动游戏循环
+  // 启动游戏循环（会初始化屏幕适配）
   game.start();
+
+  // 显示开始界面（必须在 game.start() 之后，容器尺寸才正确）
+  ui.showStart();
 });
 
 function _bindUIEvents() {
@@ -59,6 +59,35 @@ function _bindUIEvents() {
       btn.disabled = false;
       await ui.showLeaderboard();
     }
+  });
+
+  // 结算界面 "查看完整排行" 按钮
+  ui.elements.viewLeaderboardBtn.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    audio.init();
+    audio.click();
+    await ui.showLeaderboard();
+  });
+
+  // 匿名确认对话框
+  ui.elements.confirmAnonymousBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    audio.click();
+    // submitScore 内部处理
+  });
+
+  ui.elements.cancelAnonymousBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    audio.click();
+    // submitScore 内部处理
+  });
+
+  // 阻止匿名对话框上的点击冒泡
+  ui.elements.anonymousDialog.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
+  ui.elements.anonymousDialog.addEventListener('touchstart', (e) => {
+    e.stopPropagation();
   });
 
   // 再来一局（Game Over 界面）

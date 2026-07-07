@@ -6,6 +6,7 @@
 const PIPE_WIDTH = 52;
 const PIPE_GAP_INITIAL = 200;
 const PIPE_MIN_GAP = 155;
+const PIPE_GAP_VARIATION = 22;
 const PIPE_SPEED_INITIAL = 1.6;
 const PIPE_SPEED_MAX = 4.0;
 const PIPE_HEAD_HEIGHT = 24;
@@ -51,6 +52,12 @@ class Pipe {
     const gap = Math.max(PIPE_MIN_GAP, PIPE_GAP_INITIAL - score * 0.5);
     const speed = Math.min(PIPE_SPEED_MAX, PIPE_SPEED_INITIAL + score * 0.02);
     return { gap, speed };
+  }
+
+  /** 让每组管道口宽度围绕当前难度的平均值上下浮动 */
+  static randomizeGap(baseGap) {
+    const offset = (Math.random() * 2 - 1) * PIPE_GAP_VARIATION;
+    return Math.max(PIPE_MIN_GAP, baseGap + offset);
   }
 
   update(speed) {

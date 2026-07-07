@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#2C3E50">
   <title>Flappy Bird</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐤</text></svg>">
-  <link rel="stylesheet" href="css/style.css?v=5">
+  <link rel="stylesheet" href="css/style.css?v=6">
 </head>
 <body>
 
@@ -70,6 +70,14 @@
           </div>
         </div>
 
+        <div class="rank-info-row">
+          <span id="current-rank">当前排名 --</span>
+          <span class="info-divider">|</span>
+          <span id="best-score-line">最高记录：0</span>
+        </div>
+
+        <button id="view-leaderboard-btn" class="btn btn-secondary" type="button">🏆 查看完整排行</button>
+
         <div id="new-best" class="new-best-badge hidden">🎉 新纪录!</div>
 
         <div class="nickname-section">
@@ -86,6 +94,17 @@
         <button id="submit-btn" class="btn btn-primary" type="button">提交分数</button>
         <button id="play-again-btn" class="btn btn-primary" type="button">再来一局</button>
         <button id="back-home-btn" class="btn btn-secondary" type="button">回到首页</button>
+      </div>
+    </div>
+
+    <!-- 匿名确认弹窗 -->
+    <div id="anonymous-confirm-dialog" class="modal-overlay hidden">
+      <div class="modal-card confirm-card">
+        <div class="confirm-text">若昵称为空则在榜单上显示为<b>"匿名"</b></div>
+        <div class="confirm-buttons">
+          <button id="confirm-anonymous-btn" class="btn btn-primary" type="button">确认</button>
+          <button id="cancel-anonymous-btn" class="btn btn-secondary" type="button">返回</button>
+        </div>
       </div>
     </div>
 
@@ -108,16 +127,16 @@
   </div> <!-- /wrapper -->
 
   <!-- 游戏脚本（按依赖顺序加载） -->
-  <script src="js/Audio.js?v=5"></script>
-  <script src="js/Bird.js?v=5"></script>
-  <script src="js/Pipe.js?v=5"></script>
-  <script src="js/Background.js?v=5"></script>
-  <script src="js/Particles.js?v=5"></script>
-  <script src="js/Score.js?v=5"></script>
-  <script src="js/Input.js?v=5"></script>
-  <script src="js/API.js?v=5"></script>
-  <script src="js/UI.js?v=5"></script>
-  <script src="js/Game.js?v=5"></script>
-  <script src="js/main.js?v=5"></script>
+  <script src="js/Audio.js?v=6"></script>
+  <script src="js/Bird.js?v=6"></script>
+  <script src="js/Pipe.js?v=6"></script>
+  <script src="js/Background.js?v=6"></script>
+  <script src="js/Particles.js?v=6"></script>
+  <script src="js/Score.js?v=6"></script>
+  <script src="js/Input.js?v=6"></script>
+  <script src="js/API.js?v=6"></script>
+  <script src="js/UI.js?v=6"></script>
+  <script src="js/Game.js?v=6"></script>
+  <script src="js/main.js?v=6"></script>
 </body>
 </html>

@@ -16,7 +16,10 @@ class UI {
       leaderboardModal: document.getElementById('leaderboard-modal'),
       finalScore: document.getElementById('final-score'),
       bestScore: document.getElementById('best-score'),
+      bestScoreLine: document.getElementById('best-score-line'),
       newBest: document.getElementById('new-best'),
+      currentRank: document.getElementById('current-rank'),
+      viewLeaderboardBtn: document.getElementById('view-leaderboard-btn'),
       nicknameInput: document.getElementById('nickname-input'),
       submitBtn: document.getElementById('submit-btn'),
       playAgainBtn: document.getElementById('play-again-btn'),
@@ -25,23 +28,28 @@ class UI {
       leaderboardList: document.getElementById('leaderboard-list'),
       leaderboardTotal: document.getElementById('leaderboard-total'),
       closeLeaderboard: document.getElementById('close-leaderboard'),
-      startHint: document.getElementById('start-hint'),
-      titleBird: document.getElementById('title-bird'),
+      anonymousDialog: document.getElementById('anonymous-confirm-dialog'),
+      confirmAnonymousBtn: document.getElementById('confirm-anonymous-btn'),
+      cancelAnonymousBtn: document.getElementById('cancel-anonymous-btn'),
     };
   }
 
   /** 显示开始界面 */
   showStart() {
     this.hideAll();
+    this.elements.leaderboardBtn.classList.remove('hidden');
     this.elements.startScreen.classList.remove('hidden');
   }
 
   /** Game Over 结算界面 */
-  showGameOver(score, bestScore) {
+  async showGameOver(score, bestScore) {
     this.hideAll();
+    // 结算界面隐藏右上角排行榜按钮
+    this.elements.leaderboardBtn.classList.add('hidden');
     this.elements.gameOverScreen.classList.remove('hidden');
     this.elements.finalScore.textContent = score;
     this.elements.bestScore.textContent = Math.max(score, bestScore);
+    this.elements.bestScoreLine.textContent = '最高记录：' + Math.max(score, bestScore);
 
     if (score > bestScore && score > 0) {
       this.elements.newBest.classList.remove('hidden');
@@ -50,6 +58,15 @@ class UI {
     }
 
     this._lastScore = score;
+
+    // 查询当前分数在排行榜上的排名
+    this.elements.currentRank.textContent = '当前排名 查询中...';
+    try {
+      const rank = await this.leaderboard.getRank(score);
+      this.elements.currentRank.textContent = rank ? `当前排名 ${rank}` : '暂未上榜';
+    } catch {
+      this.elements.currentRank.textContent = '暂未上榜';
+    }
   }
 
   /** 隐藏所有界面 */
@@ -57,22 +74,49 @@ class UI {
     this.elements.startScreen.classList.add('hidden');
     this.elements.gameOverScreen.classList.add('hidden');
     this.elements.leaderboardModal.classList.add('hidden');
+    this.elements.anonymousDialog.classList.add('hidden');
   }
 
-  /** 提交分数（异步） */
+  /** 提交分数（异步）。空昵称弹出确认窗 */
   async submitScore() {
     const nickname = this.elements.nicknameInput.value.trim();
-    if (!nickname) {
-      this.elements.nicknameInput.classList.add('shake');
-      setTimeout(() => this.elements.nicknameInput.classList.remove('shake'), 500);
-      return null;
+
+    if (nickname) {
+      return this._doSubmit(nickname);
     }
 
+    // 空输入：弹出匿名确认窗
+    return new Promise((resolve) => {
+      this.elements.anonymousDialog.classList.remove('hidden');
+
+      const cleanup = () => {
+        this.elements.anonymousDialog.classList.add('hidden');
+        this.elements.confirmAnonymousBtn.removeEventListener('click', onConfirm);
+        this.elements.cancelAnonymousBtn.removeEventListener('click', onCancel);
+      };
+
+      const onConfirm = async () => {
+        cleanup();
+        const result = await this._doSubmit('匿名');
+        resolve(result);
+      };
+
+      const onCancel = () => {
+        cleanup();
+        resolve(null);
+      };
+
+      this.elements.confirmAnonymousBtn.addEventListener('click', onConfirm);
+      this.elements.cancelAnonymousBtn.addEventListener('click', onCancel);
+    });
+  }
+
+  async _doSubmit(nickname) {
     this.elements.submitBtn.textContent = '提交中...';
     this.elements.submitBtn.disabled = true;
 
-    const result = await this.leaderboard.submitScore(nickname, this._lastScore);
-    return result;
+    const ok = await this.leaderboard.submitScore(nickname, this._lastScore);
+    return ok;
   }
 
   /** 显示排行榜弹窗（异步） */
