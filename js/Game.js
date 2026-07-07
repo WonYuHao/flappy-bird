@@ -7,7 +7,7 @@ class Game {
   constructor(canvas) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
-    this.state = 'IDLE'; // IDLE | PLAYING | DEAD | FALLEN
+    this.state = 'IDLE'; // IDLE | PLAYING | PAUSED | DEAD | FALLEN
 
     // 子系统
     this.bird = new Bird();
@@ -93,6 +93,9 @@ class Game {
       case 'PLAYING':
         this.flap();
         break;
+      case 'PAUSED':
+        this.resumeGame();
+        break;
       // DEAD 状态下不响应键盘/点击，必须通过按钮操作
     }
   }
@@ -112,6 +115,29 @@ class Game {
 
     this.audio.flap();
     ui.hideAll();
+    ui.elements.leaderboardBtn.classList.add('hidden');
+    ui.elements.pauseBtn.classList.remove('hidden');
+    ui.hidePause();
+  }
+
+  pauseGame() {
+    if (this.state !== 'PLAYING') return;
+    this.state = 'PAUSED';
+    ui.showPause();
+  }
+
+  resumeGame() {
+    if (this.state !== 'PAUSED') return;
+    this.state = 'PLAYING';
+    ui.hidePause();
+  }
+
+  togglePause() {
+    if (this.state === 'PLAYING') {
+      this.pauseGame();
+    } else if (this.state === 'PAUSED') {
+      this.resumeGame();
+    }
   }
 
   /** 小鸟跳跃 */
@@ -124,6 +150,8 @@ class Game {
   die() {
     this.state = 'DEAD';
     this.deathTimer = 0;
+    ui.elements.pauseBtn.classList.add('hidden');
+    ui.hidePause();
     this.audio.die();
     this.bird.kill(); // 停在碰撞位置，眼睛变叉号
     this.particles.explode(
@@ -153,6 +181,8 @@ class Game {
     this.score = 0;
     this.currentSpeed = PIPE_SPEED_INITIAL;
     this.currentGap = PIPE_GAP_INITIAL;
+    ui.elements.pauseBtn.classList.add('hidden');
+    ui.hidePause();
     ui.showStart();
   }
 

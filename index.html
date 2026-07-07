@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#2C3E50">
   <title>Flappy Bird</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐤</text></svg>">
-  <link rel="stylesheet" href="css/style.css?v=6">
+  <link rel="stylesheet" href="css/style.css?v=8">
 </head>
 <body>
 
@@ -27,12 +27,13 @@
 
     <!-- 排行榜按钮 - 独立于界面外 -->
     <button id="leaderboard-btn" class="top-right-btn" type="button">🏆 排行榜</button>
+    <button id="pause-btn" class="top-left-btn hidden" type="button" aria-label="暂停">Ⅱ</button>
 
     <!-- 开始界面 -->
     <div id="start-screen" class="overlay">
       <div class="start-content">
         <div class="title-bird-container">
-          <svg class="title-bird" viewBox="0 0 34 26">
+          <svg class="title-bird" viewBox="0 0 40 26">
             <ellipse cx="17" cy="13" rx="17" ry="13" fill="#FFD54F"/>
             <ellipse cx="17" cy="16" rx="15" ry="10" fill="#FFC107"/>
             <circle cx="24" cy="8" r="8" fill="#FFFFFF"/>
@@ -49,8 +50,18 @@
         </div>
         <div class="start-instructions">
           📱 点击屏幕 &nbsp;|&nbsp; 🖥 空格键 / 鼠标<br>
-          穿过管道即可得分
+          P 暂停 &nbsp;|&nbsp; 穿过管道即可得分
         </div>
+      </div>
+    </div>
+
+    <!-- 暂停界面 -->
+    <div id="pause-screen" class="overlay hidden">
+      <div class="pause-card">
+        <div class="pause-title">Game Paused</div>
+        <div class="pause-subtitle">休息一下，准备好再继续</div>
+        <button id="resume-btn" class="btn btn-primary" type="button">继续游戏</button>
+        <button id="pause-leaderboard-btn" class="btn btn-secondary" type="button">🏆 查看排行榜</button>
       </div>
     </div>
 
@@ -127,16 +138,16 @@
   </div> <!-- /wrapper -->
 
   <!-- 游戏脚本（按依赖顺序加载） -->
-  <script src="js/Audio.js?v=6"></script>
-  <script src="js/Bird.js?v=6"></script>
-  <script src="js/Pipe.js?v=6"></script>
-  <script src="js/Background.js?v=6"></script>
-  <script src="js/Particles.js?v=6"></script>
-  <script src="js/Score.js?v=6"></script>
-  <script src="js/Input.js?v=6"></script>
-  <script src="js/API.js?v=6"></script>
-  <script src="js/UI.js?v=6"></script>
-  <script src="js/Game.js?v=6"></script>
-  <script src="js/main.js?v=6"></script>
+  <script src="js/Audio.js?v=8"></script>
+  <script src="js/Bird.js?v=8"></script>
+  <script src="js/Pipe.js?v=8"></script>
+  <script src="js/Background.js?v=8"></script>
+  <script src="js/Particles.js?v=8"></script>
+  <script src="js/Score.js?v=8"></script>
+  <script src="js/Input.js?v=8"></script>
+  <script src="js/API.js?v=8"></script>
+  <script src="js/UI.js?v=8"></script>
+  <script src="js/Game.js?v=8"></script>
+  <script src="js/main.js?v=8"></script>
 </body>
 </html>

@@ -12,6 +12,7 @@ class UI {
   _cacheDOM() {
     this.elements = {
       startScreen: document.getElementById('start-screen'),
+      pauseScreen: document.getElementById('pause-screen'),
       gameOverScreen: document.getElementById('game-over-screen'),
       leaderboardModal: document.getElementById('leaderboard-modal'),
       finalScore: document.getElementById('final-score'),
@@ -25,6 +26,9 @@ class UI {
       playAgainBtn: document.getElementById('play-again-btn'),
       backHomeBtn: document.getElementById('back-home-btn'),
       leaderboardBtn: document.getElementById('leaderboard-btn'),
+      pauseBtn: document.getElementById('pause-btn'),
+      resumeBtn: document.getElementById('resume-btn'),
+      pauseLeaderboardBtn: document.getElementById('pause-leaderboard-btn'),
       leaderboardList: document.getElementById('leaderboard-list'),
       leaderboardTotal: document.getElementById('leaderboard-total'),
       closeLeaderboard: document.getElementById('close-leaderboard'),
@@ -38,7 +42,20 @@ class UI {
   showStart() {
     this.hideAll();
     this.elements.leaderboardBtn.classList.remove('hidden');
+    this.elements.pauseBtn.classList.add('hidden');
     this.elements.startScreen.classList.remove('hidden');
+  }
+
+  showPause() {
+    this.elements.leaderboardBtn.classList.add('hidden');
+    this.elements.pauseBtn.textContent = '▶';
+    this.elements.pauseScreen.classList.remove('hidden');
+  }
+
+  hidePause() {
+    this.elements.leaderboardBtn.classList.add('hidden');
+    this.elements.pauseBtn.textContent = 'Ⅱ';
+    this.elements.pauseScreen.classList.add('hidden');
   }
 
   /** Game Over 结算界面 */
@@ -46,6 +63,7 @@ class UI {
     this.hideAll();
     // 结算界面隐藏右上角排行榜按钮
     this.elements.leaderboardBtn.classList.add('hidden');
+    this.elements.pauseBtn.classList.add('hidden');
     this.elements.gameOverScreen.classList.remove('hidden');
     this.elements.finalScore.textContent = score;
     this.elements.bestScore.textContent = Math.max(score, bestScore);
@@ -72,6 +90,7 @@ class UI {
   /** 隐藏所有界面 */
   hideAll() {
     this.elements.startScreen.classList.add('hidden');
+    this.elements.pauseScreen.classList.add('hidden');
     this.elements.gameOverScreen.classList.add('hidden');
     this.elements.leaderboardModal.classList.add('hidden');
     this.elements.anonymousDialog.classList.add('hidden');

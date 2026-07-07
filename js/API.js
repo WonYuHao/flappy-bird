@@ -38,7 +38,7 @@ class Leaderboard {
   async getRankings() {
     try {
       const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/scores?select=*&order=score.desc&limit=${this.maxEntries}`,
+        `${SUPABASE_URL}/rest/v1/scores?select=*&order=score.desc,created_at.asc,id.asc&limit=${this.maxEntries}`,
         {
           headers: {
             'apikey': SUPABASE_KEY,
@@ -65,21 +65,30 @@ class Leaderboard {
   /** 查询某个分数在排行榜上的排名 */
   async getRank(score) {
     try {
-      // 统计比当前分数高的记录数
+      // 同分按先提交在前；当前分数尚未提交时，应排在已有同分记录之后
       const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/scores?select=score&score=gt.${score}`,
+        `${SUPABASE_URL}/rest/v1/scores?select=score&score=gte.${score}`,
         {
+          method: 'HEAD',
           headers: {
             'apikey': SUPABASE_KEY,
             'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Prefer': 'count=exact',
           },
         }
       );
-      const higher = await res.json();
-      return higher.length + 1;
+      const beforeOrEqual = this._parseTotalCount(res.headers.get('content-range'));
+      return beforeOrEqual !== null ? beforeOrEqual + 1 : null;
     } catch (e) {
       console.warn('查询排名失败:', e.message);
       return null;
     }
+  }
+
+  _parseTotalCount(contentRange) {
+    if (!contentRange) return null;
+    const total = contentRange.split('/').pop();
+    const count = Number(total);
+    return Number.isFinite(count) ? count : null;
   }
 }

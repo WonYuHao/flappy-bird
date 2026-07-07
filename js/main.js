@@ -39,6 +39,35 @@ function _bindUIEvents() {
     ui.hideLeaderboard();
   });
 
+  // 暂停 / 继续
+  ui.elements.pauseBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    audio.init();
+    audio.click();
+    game.togglePause();
+  });
+
+  ui.elements.resumeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    audio.init();
+    audio.click();
+    game.resumeGame();
+  });
+
+  ui.elements.pauseLeaderboardBtn.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    audio.init();
+    audio.click();
+    await ui.showLeaderboard();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'KeyP' && (game.state === 'PLAYING' || game.state === 'PAUSED')) {
+      e.preventDefault();
+      game.togglePause();
+    }
+  });
+
   // 排行榜遮罩层点击关闭
   ui.elements.leaderboardModal.addEventListener('click', (e) => {
     if (e.target === ui.elements.leaderboardModal) {
