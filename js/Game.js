@@ -15,7 +15,6 @@ class Game {
     this.pipes = [];
     this.scoreRenderer = new ScoreRenderer();
     this.particles = new Particles();
-    this.audio = new AudioManager();
     this.input = new Input();
 
     // 管道生成
@@ -84,8 +83,6 @@ class Game {
   }
 
   handleAction() {
-    this.audio.init();
-
     switch (this.state) {
       case 'IDLE':
         this.startGame();
@@ -113,7 +110,6 @@ class Game {
     this.particles.reset();
     this.pipeSpawnCounter = 0;
 
-    this.audio.flap();
     ui.hideAll();
     ui.elements.leaderboardBtn.classList.add('hidden');
     ui.elements.pauseBtn.classList.remove('hidden');
@@ -143,7 +139,6 @@ class Game {
   /** 小鸟跳跃 */
   flap() {
     this.bird.jump();
-    this.audio.flap();
   }
 
   /** 碰撞后进入 DEAD 状态 */
@@ -152,7 +147,6 @@ class Game {
     this.deathTimer = 0;
     ui.elements.pauseBtn.classList.add('hidden');
     ui.hidePause();
-    this.audio.die();
     this.bird.kill(); // 停在碰撞位置，眼睛变叉号
     this.particles.explode(
       this.bird.x + this.bird.width / 2,
@@ -294,7 +288,6 @@ class Game {
         pipe.passed = true;
         this.score++;
         this.scoreRenderer.setScore(this.score);
-        this.audio.score();
       }
     }
   }
